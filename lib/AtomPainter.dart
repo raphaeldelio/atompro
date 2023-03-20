@@ -26,8 +26,11 @@ class AtomPainter extends CustomPainter {
 
     // Calculate nucleus radius based on atomic mass
     double nucleusRadius = math.sqrt(atom.mass);
+    drawProtonsAndNeutrons(neutronPaint, protonPaint, atomPosition2D, nucleusRadius, canvas);
+    drawElectrons(nucleusRadius, electronColors, canvas, atomPosition2D);
+  }
 
-    // Draw protons and neutrons
+  void drawProtonsAndNeutrons(Paint neutronPaint, Paint protonPaint, Offset atomPosition2D, double nucleusRadius, Canvas canvas) {
     int numberOfNucleons = atom.atomicNumber + atom.numberOfNeutrons;
     bool startWithNeutrons = atom.atomicNumber < atom.numberOfNeutrons;
     for (int i = 0; i < numberOfNucleons; i++) {
@@ -48,42 +51,39 @@ class AtomPainter extends CustomPainter {
       );
       canvas.drawCircle(nucleonPosition, nucleonRadius, nucleonPaint);
     }
+  }
 
-    // Draw electrons
+  void drawElectrons(double nucleusRadius, List<Color> electronColors, Canvas canvas, Offset atomPosition2D) {
     int electronIndex = 0;
     for (var orbital in atom.electronConfiguration.orbitals) {
       double orbitalRadius = (electronIndex + 1) * 15.0 + nucleusRadius;
-
-
       Paint electronPaint = Paint()..color = electronColors[electronIndex % electronColors.length];
-
-      // Draw orbit line
-      if (showOrbitLines) {
-        Paint orbitPaint = Paint()
-          ..color = Colors.grey.withOpacity(0.3)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.0;
-        canvas.drawCircle(atomPosition2D, orbitalRadius, orbitPaint);
-      }
-
-      for (int i = 0; i < orbital.occupancy; i++) {
-        double phaseOffset = (2 * math.pi * i) / orbital.occupancy;
-
-        double speedFactor = baseSpeedFactor / math.pow(electronIndex + 1, 1.2); // Modify speed factor based on orbital index
-        double angle = phaseOffset +
-            (((electronIndex % 2 == 0) ? 1 : -1) * animation.value * speedFactor * 2 * math.pi);
-
-        Offset electronPosition = Offset(
-          atomPosition2D.dx + orbitalRadius * math.cos(angle),
-          atomPosition2D.dy + orbitalRadius * math.sin(angle),
-        );
-        canvas.drawCircle(electronPosition, electronRadius, electronPaint);
-      }
-
-
-
-
+      drawOrbitLine(canvas, atomPosition2D, orbitalRadius, orbital, electronIndex, electronPaint);
       electronIndex++;
+    }
+  }
+
+  void drawOrbitLine(Canvas canvas, Offset atomPosition2D, double orbitalRadius, Orbital orbital, int electronIndex, Paint electronPaint) {
+    if (showOrbitLines) {
+      Paint orbitPaint = Paint()
+        ..color = Colors.grey.withOpacity(0.3)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.0;
+      canvas.drawCircle(atomPosition2D, orbitalRadius, orbitPaint);
+    }
+
+    for (int i = 0; i < orbital.occupancy; i++) {
+      double phaseOffset = (2 * math.pi * i) / orbital.occupancy;
+
+      double speedFactor = baseSpeedFactor / math.pow(electronIndex + 1, 1.2); // Modify speed factor based on orbital index
+      double angle = phaseOffset +
+          (((electronIndex % 2 == 0) ? 1 : -1) * animation.value * speedFactor * 2 * math.pi);
+
+      Offset electronPosition = Offset(
+        atomPosition2D.dx + orbitalRadius * math.cos(angle),
+        atomPosition2D.dy + orbitalRadius * math.sin(angle),
+      );
+      canvas.drawCircle(electronPosition, electronRadius, electronPaint);
     }
   }
 

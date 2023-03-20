@@ -45,9 +45,7 @@ class _AtomSimulationState extends State<AtomSimulation> with SingleTickerProvid
     );
 
     tween = Tween<double>(begin: 0, end: 1); // Add this line
-
     animation = tween.animate(CurvedAnimation(parent: _controller, curve: Curves.linear)); // Modify this line
-
     _controller.repeat();
   }
 
@@ -64,44 +62,60 @@ class _AtomSimulationState extends State<AtomSimulation> with SingleTickerProvid
       appBar: AppBar(
         title: const Text('AtomPro'),
         actions: [
-          IconButton(
-            onPressed: () {
-              setState(() {
-                showOrbitLines = !showOrbitLines;
-              });
-            },
-            icon: showOrbitLines ? const Icon(Icons.visibility) : const Icon(Icons.visibility_off),
-          ),
-          IconButton(
-            onPressed: () => _showAtomInfo(context),
-            icon: const Icon(Icons.info_outline),
-          ),
+          buildViewOrbitalsButton(),
+          buildViewAtomInfoButton(context),
         ],
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
-              onPressed: _selectAtom,
-              child: Text(selectedAtom.name),
-            ),
-            Expanded(
-              child: InteractiveViewer(
-                panEnabled: true,
-                scaleEnabled: true,
-                maxScale: 10.0, // You can adjust this value to limit the maximum zoom level
-                minScale: 0.1, // You can adjust this value to limit the minimum zoom level
-                child: Center(
-                    child: CustomPaint(
-                  painter: AtomPainter(atom: selectedAtom, animation: animation, showOrbitLines: showOrbitLines),
-                )),
-              ),
-            ),
+            buildSelectAtomButtom(),
+            buildAtomViewer(),
           ],
         ),
       ),
     );
+  }
+
+  Expanded buildAtomViewer() {
+    return Expanded(
+            child: InteractiveViewer(
+              panEnabled: true,
+              scaleEnabled: true,
+              maxScale: 10.0, // You can adjust this value to limit the maximum zoom level
+              minScale: 0.1, // You can adjust this value to limit the minimum zoom level
+              child: Center(
+                  child: CustomPaint(
+                painter: AtomPainter(atom: selectedAtom, animation: animation, showOrbitLines: showOrbitLines),
+              )),
+            ),
+          );
+  }
+
+  ElevatedButton buildSelectAtomButtom() {
+    return ElevatedButton(
+            onPressed: _selectAtom,
+            child: Text(selectedAtom.name),
+          );
+  }
+
+  IconButton buildViewAtomInfoButton(BuildContext context) {
+    return IconButton(
+          onPressed: () => _showAtomInfo(context),
+          icon: const Icon(Icons.info_outline),
+        );
+  }
+
+  IconButton buildViewOrbitalsButton() {
+    return IconButton(
+          onPressed: () {
+            setState(() {
+              showOrbitLines = !showOrbitLines;
+            });
+          },
+          icon: showOrbitLines ? const Icon(Icons.visibility) : const Icon(Icons.visibility_off),
+        );
   }
 
   void _showAtomInfo(BuildContext context) {
