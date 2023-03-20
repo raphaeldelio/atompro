@@ -1,2 +1,3 @@
-# atompro
-Atom Visualization Tool
+# Atom Pro
+
+A Flutter project for visualizing atoms.
