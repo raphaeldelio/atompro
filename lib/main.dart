@@ -1,5 +1,6 @@
 import 'package:atom_simulator/Atoms.dart';
 import 'package:flutter/material.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import 'Atom.dart';
 import 'AtomListScreen.dart';
@@ -63,20 +64,26 @@ class _AtomSimulationState extends State<AtomSimulation> with SingleTickerProvid
         title: const Text('AtomPro'),
         actions: [
           buildViewOrbitalsButton(),
-          buildViewAtomInfoButton(context),
         ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            buildSelectAtomButtom(),
-            buildAtomViewer(),
-          ],
+      body: SlidingUpPanel(
+        panel: _buildAtomInfoPanel(context),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              buildSelectAtomButtom(),
+              buildAtomViewer(),
+            ],
+          ),
         ),
+        minHeight: 80, // Adjust this value to control how much of the card is visible initially
+        maxHeight: MediaQuery.of(context).size.height * 0.3, // Adjust this value to control how much the card can expand
+        borderRadius: const BorderRadius.only(topLeft: Radius.circular(24.0), topRight: Radius.circular(24.0)),
       ),
     );
   }
+
 
   Expanded buildAtomViewer() {
     return Expanded(
@@ -100,13 +107,6 @@ class _AtomSimulationState extends State<AtomSimulation> with SingleTickerProvid
           );
   }
 
-  IconButton buildViewAtomInfoButton(BuildContext context) {
-    return IconButton(
-          onPressed: () => _showAtomInfo(context),
-          icon: const Icon(Icons.info_outline),
-        );
-  }
-
   IconButton buildViewOrbitalsButton() {
     return IconButton(
           onPressed: () {
@@ -118,37 +118,42 @@ class _AtomSimulationState extends State<AtomSimulation> with SingleTickerProvid
         );
   }
 
-  void _showAtomInfo(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
+  Widget _buildAtomInfoPanel(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
             children: [
-              Text(selectedAtom.name, style: Theme
-                  .of(context)
-                  .textTheme
-                  .headlineSmall),
-              const SizedBox(height: 8.0),
-              Text('Symbol: ${selectedAtom.symbol}'),
-              Text('Atomic Number: ${selectedAtom.atomicNumber}'),
-              Text('Number of Neutrons: ${selectedAtom.numberOfNeutrons}'),
-              Text('Mass: ${selectedAtom.mass}'),
-              Text('Group: ${selectedAtom.group}'),
-              const SizedBox(height: 8.0),
-              Text('Electron Configuration:', style: Theme
-                  .of(context)
-                  .textTheme
-                  .titleMedium),
-              Text(selectedAtom.electronConfiguration.toString()),
-              const Text('\n')
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey, width: 1),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Center(child: Text(selectedAtom.symbol)),
+              ),
+              const SizedBox(width: 16.0), // Add some spacing between the symbol container and the name
+              Text(selectedAtom.name, style: Theme.of(context).textTheme.headlineSmall),
             ],
           ),
-        );
-      },
+          const SizedBox(height: 12.0),
+          const Text(''),
+          Text('Atomic Number: ${selectedAtom.atomicNumber}'),
+          Text('Number of Neutrons: ${selectedAtom.numberOfNeutrons}'),
+          Text('Mass: ${selectedAtom.mass}'),
+          Text('Group: ${selectedAtom.group}'),
+          const SizedBox(height: 8.0),
+          Text('Electron Configuration:', style: Theme.of(context).textTheme.titleMedium),
+          Text(selectedAtom.electronConfiguration.toString()),
+          const Text('\n')
+        ],
+      ),
     );
   }
+
+
 }
