@@ -71,7 +71,7 @@ class Atoms {
     ),
     'Group 13': Atom(
       id: 5,
-      name: "Group 13",
+      name: "Boron",
       group: "Group 13",
       symbol: "B",
       atomicNumber: 5,
@@ -89,7 +89,7 @@ class Atoms {
     ),
     'Group 14': Atom(
       id: 6,
-      name: "Group 14",
+      name: "Carbon",
       group: "Group 14",
       symbol: "C",
       atomicNumber: 6,
@@ -423,7 +423,7 @@ class Atoms {
     ),
     'Group 5': Atom(
       id: 23,
-      name: "Group 5",
+      name: "Vanadium",
       group: "Group 5",
       symbol: "V",
       atomicNumber: 23,
